@@ -41,7 +41,7 @@ func TestNewWithTimeNow(t *testing.T) {
 
 	diff := now.Sub(uutidTime)
 	// UUTID are accurate down to the 100th of nanoseconds
-	if diff > 100*time.Nanosecond || diff < 100*time.Nanosecond {
+	if diff > 100*time.Nanosecond {
 		t.Fatalf("expected UUTID time to be closer to now than 100 nanoseconds, got: %s", diff)
 	}
 }
