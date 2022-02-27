@@ -1,6 +1,7 @@
 package uutid
 
 import (
+	"bytes"
 	"encoding/binary"
 	"encoding/hex"
 	"io"
@@ -202,6 +203,46 @@ func TestFromUUID(t *testing.T) {
 	}
 }
 
+func TestFromString(t *testing.T) {
+	expected := New()
+
+	str64 := expected.Base64()
+	actual, err := FromString(str64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !bytes.Equal(expected[:], actual[:]) {
+		t.Fatalf("Base64: actual and expected UUTID doesn't match.\nexpected:\t%b\ngot:\t\t%b", expected[:], actual[:])
+	}
+
+	str16 := expected.Base16()
+	actual, err = FromString(str16)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !bytes.Equal(expected[:], actual[:]) {
+		t.Fatalf("Base16: actual and expected UUTID doesn't match.\nexpected:\t%b\ngot:\t\t%b", expected[:], actual[:])
+	}
+
+	strUUID := expected.UUID()
+	actual, err = FromString(strUUID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !bytes.Equal(expected[:], actual[:]) {
+		t.Fatalf("UUID: actual and expected UUTID doesn't match.\nexpected:\t%b\ngot:\t\t%b", expected[:], actual[:])
+	}
+
+	strBinary := string(expected[:])
+	actual, err = FromString(strBinary)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !bytes.Equal(expected[:], actual[:]) {
+		t.Fatalf("binary: actual and expected UUTID doesn't match.\nexpected:\t%b\ngot:\t\t%b", expected[:], actual[:])
+	}
+}
+
 func BenchmarkNew(b *testing.B) {
 	var uutid UUTID
 	for i := 0; i < b.N; i++ {
@@ -249,7 +290,7 @@ func BenchmarkFromBytes(b *testing.B) {
 	uutidBytes := uutid.Bytes()
 
 	for i := 0; i < b.N; i++ {
-		uutid = FromBytes(uutidBytes)
+		uutid, _ = FromBytes(uutidBytes)
 	}
 	_ = uutid
 }

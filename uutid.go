@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"time"
 )
@@ -92,10 +93,23 @@ func NewWithTime(t time.Time) UUTID {
 	return uutid
 }
 
+func FromString(str string) (UUTID, error) {
+	switch len(str) {
+	case 16:
+		// Try to parse as binary
+		return FromBytes([]byte(str))
+	case 22:
+		return FromBase64(str)
+	case 32, 36:
+		return FromUUID(str)
+	}
+	return NilUUTID, fmt.Errorf("unexpected length: %d", len(str))
+}
+
 // FromBytes converts a byte slice to a UUTID
-func FromBytes(uutidSlice []byte) UUTID {
+func FromBytes(uutidSlice []byte) (UUTID, error) {
 	if len(uutidSlice) != 16 {
-		return NilUUTID
+		return NilUUTID, errors.New("wrong length")
 	}
 
 	return UUTID{
@@ -115,13 +129,13 @@ func FromBytes(uutidSlice []byte) UUTID {
 		13: uutidSlice[13],
 		14: uutidSlice[14],
 		15: uutidSlice[15],
-	}
+	}, nil
 }
 
 // FromBase64 returns uutid from a base 64 encoded uutid
 func FromBase64(str string) (UUTID, error) {
 	if len(str) != 22 {
-		return UUTID{}, errors.New("unable to extract uutid from base64 string")
+		return NilUUTID, errors.New("unable to extract uutid from base64 string")
 	}
 
 	uutid := UUTID{}
@@ -131,13 +145,13 @@ func FromBase64(str string) (UUTID, error) {
 }
 
 // FromBase16 returns uutid from a base 16 encoded uutid
-func FromBase16(base16 string) (UUTID, error) {
-	if len(base16) != 32 {
-		return UUTID{}, errors.New("unable to extract uutid from base16 string")
+func FromBase16(str string) (UUTID, error) {
+	if len(str) != 32 {
+		return NilUUTID, errors.New("unable to extract uutid from base16 string")
 	}
 
 	uutid := UUTID{}
-	hex.Decode(uutid[:], []byte(base16[:]))
+	hex.Decode(uutid[:], []byte(str[:]))
 
 	return uutid, nil
 }
@@ -157,7 +171,7 @@ func FromUUID(uuid string) (UUTID, error) {
 		return uutid, nil
 	}
 
-	return UUTID{}, errors.New("unable to extract uutid")
+	return NilUUTID, errors.New("unable to extract uutid")
 }
 
 // String returns uutid as a hex encoded string
@@ -165,7 +179,7 @@ func (uutid UUTID) String() string {
 	return uutid.Base16()
 }
 
-// Base32 returns uutid as a regular base 32 encoded string
+// Base64 returns uutid as a regular base 64 encoded string
 func (uutid UUTID) Base64() string {
 	var buf [22]byte
 	base64.RawURLEncoding.Encode(buf[:], uutid[:])
