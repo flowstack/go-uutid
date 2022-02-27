@@ -243,6 +243,39 @@ func TestFromString(t *testing.T) {
 	}
 }
 
+func TestAllCombosOnSameUUTID(t *testing.T) {
+	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC).Truncate(0)
+	testUUTID := NewWithTime(testTime)
+
+	fromFuncs := map[string]func(string) (UUTID, error){
+		"Base64": FromBase64,
+		"Base16": FromBase16,
+		"UUID":   FromUUID,
+	}
+
+	toFuncs := map[string]func() string{
+		"Base64": testUUTID.Base64,
+		"Base16": testUUTID.Base16,
+		"UUID":   testUUTID.UUID,
+	}
+
+	for typ, toFunc := range toFuncs {
+		toStr := toFunc()
+		uutid, err := fromFuncs[typ](toStr)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal(testUUTID[:], uutid[:]) {
+			t.Fatalf("binary: actual and expected UUTID doesn't match.\nexpected:\t%b\ngot:\t\t%b", testUUTID[:], uutid[:])
+		}
+
+		uutid2, err := FromString(toStr)
+		if !bytes.Equal(uutid[:], uutid2[:]) {
+			t.Fatalf("binary: actual and expected UUTID doesn't match.\nexpected:\t%b\ngot:\t\t%b", uutid[:], uutid2[:])
+		}
+	}
+}
+
 func BenchmarkNew(b *testing.B) {
 	var uutid UUTID
 	for i := 0; i < b.N; i++ {
