@@ -2,7 +2,6 @@ package uutid
 
 import (
 	"crypto/rand"
-	"encoding/base32"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
@@ -131,22 +130,6 @@ func FromBase64(str string) (UUTID, error) {
 	return uutid, nil
 }
 
-// FromBase32 returns uutid from a base 32 encoded uutid
-const crockfordAlphabet = "0123456789abcdefghjkmnpqrstvwxyz"
-
-var base32Encoder = base32.NewEncoding(crockfordAlphabet).WithPadding(base32.NoPadding)
-
-func FromBase32(str string) (UUTID, error) {
-	if len(str) != 24 {
-		return UUTID{}, errors.New("unable to extract uutid from base32 string")
-	}
-
-	uutid := UUTID{}
-	base32Encoder.Decode(uutid[:], []byte(str[:]))
-
-	return uutid, nil
-}
-
 // FromBase16 returns uutid from a base 16 encoded uutid
 func FromBase16(base16 string) (UUTID, error) {
 	if len(base16) != 32 {
@@ -186,13 +169,6 @@ func (uutid UUTID) String() string {
 func (uutid UUTID) Base64() string {
 	var buf [22]byte
 	base64.RawURLEncoding.Encode(buf[:], uutid[:])
-	return string(buf[:])
-}
-
-// Base32 returns uutid as a regular base 32 encoded string
-func (uutid UUTID) Base32() string {
-	var buf [24]byte
-	base32Encoder.Encode(buf[:], uutid[:])
 	return string(buf[:])
 }
 

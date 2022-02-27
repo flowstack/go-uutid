@@ -168,23 +168,6 @@ func TestFromBase64(t *testing.T) {
 	}
 }
 
-func TestFromBase32(t *testing.T) {
-	// uutid := New()
-	// expected := uutid.Base32()
-	expected := "c8bdfc02794eheda39v63kw9" // Crockford
-
-	toUUTID, err := FromBase32(expected)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	actual := toUUTID.Base32()
-
-	if actual != expected {
-		t.Fatalf("actual and expected base 32 doesn't match.\nexpected: %s, got: %s", expected, actual)
-	}
-}
-
 func TestFromBase16(t *testing.T) {
 	// uutid := New()
 	// expected := uutid.Base16()
@@ -282,17 +265,6 @@ func BenchmarkFromBase64(b *testing.B) {
 	_, _ = uutid, err
 }
 
-func BenchmarkFromBase32(b *testing.B) {
-	uutid := New()
-	base32 := uutid.Base32()
-	var err error
-
-	for i := 0; i < b.N; i++ {
-		uutid, err = FromBase32(base32)
-	}
-	_, _ = uutid, err
-}
-
 func BenchmarkFromBase16(b *testing.B) {
 	uutid := New()
 	base16 := uutid.Base16()
@@ -322,15 +294,6 @@ func BenchmarkBase64(b *testing.B) {
 		base64 = uutid.Base64()
 	}
 	_, _ = uutid, base64
-}
-
-func BenchmarkBase32(b *testing.B) {
-	uutid := New()
-	var base32 string
-	for i := 0; i < b.N; i++ {
-		base32 = uutid.Base32()
-	}
-	_, _ = uutid, base32
 }
 
 func BenchmarkBase16(b *testing.B) {
