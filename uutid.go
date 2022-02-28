@@ -174,6 +174,11 @@ func FromUUID(uuid string) (UUTID, error) {
 	return NilUUTID, errors.New("unable to extract uutid")
 }
 
+// Raw returns uutid as the raw [16]byte value, but as a byte slice
+func (uutid UUTID) Raw() []byte {
+	return uutid[:]
+}
+
 // String returns uutid as a hex encoded string
 func (uutid UUTID) String() string {
 	return uutid.Base16()
