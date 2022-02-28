@@ -12,14 +12,14 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	now := time.Now()
+	now := time.Now().Truncate(0)
 
 	uutid := New()
 	if uutid == NilUUTID {
 		t.Fatal("expected utid to not be nil")
 	}
 
-	uutidTime := uutid.Time()
+	uutidTime := uutid.Time().Truncate(0)
 
 	diff := uutidTime.Sub(now)
 	if diff < 0 {
@@ -31,14 +31,14 @@ func TestNew(t *testing.T) {
 }
 
 func TestNewWithTimeNow(t *testing.T) {
-	now := time.Now()
+	now := time.Now().Truncate(0)
 
 	uutid := NewWithTime(now)
 	if uutid == NilUUTID {
 		t.Fatal("expected utid to not be nil")
 	}
 
-	uutidTime := uutid.Time()
+	uutidTime := uutid.Time().Truncate(0)
 
 	diff := now.Sub(uutidTime)
 	// UUTID are accurate down to the 100th of nanoseconds
@@ -48,14 +48,14 @@ func TestNewWithTimeNow(t *testing.T) {
 }
 
 func TestNewWithCustomTime(t *testing.T) {
-	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC)
+	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC).Truncate(0)
 
 	uutid := NewWithTime(testTime)
 	if uutid == NilUUTID {
 		t.Fatal("expected utid to not be nil")
 	}
 
-	uutidTime := uutid.Time()
+	uutidTime := uutid.Time().Truncate(0)
 
 	diff := testTime.Sub(uutidTime)
 	if diff != 0 {
@@ -68,8 +68,8 @@ func TestNewWithCustomTime(t *testing.T) {
 }
 
 func TestUUIDUnixTime(t *testing.T) {
-	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC)
-	expectedTime := time.Date(2021, 1, 17, 1, 5, 10, 0, time.UTC)
+	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC).Truncate(0)
+	expectedTime := time.Date(2021, 1, 17, 1, 5, 10, 0, time.UTC).Truncate(0)
 
 	uutid := NewWithTime(testTime)
 	if uutid == NilUUTID {
@@ -80,7 +80,7 @@ func TestUUIDUnixTime(t *testing.T) {
 	rawTime, _ := hex.DecodeString(string(uuidTime))
 	sec := int64(binary.BigEndian.Uint32(rawTime))
 
-	unixTime := time.Unix(sec, 0)
+	unixTime := time.Unix(sec, 0).Truncate(0)
 
 	diff := expectedTime.Sub(unixTime)
 	if diff != 0 {
@@ -92,7 +92,7 @@ func TestUUID(t *testing.T) {
 	sec := int64(7952935226)
 	nsec := int64(782162000)
 
-	testTime := time.Unix(sec, nsec)
+	testTime := time.Unix(sec, nsec).Truncate(0)
 	uutid := NewWithTime(testTime)
 	if uutid == NilUUTID {
 		t.Fatal("expected utid to not be nil")
@@ -107,14 +107,14 @@ func TestNewWithMathRand(t *testing.T) {
 	rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
 	SetRand(rander)
 
-	now := time.Now()
+	now := time.Now().Truncate(0)
 
 	uutid := New()
 	if uutid == NilUUTID {
 		t.Fatal("expected utid to not be nil")
 	}
 
-	uutidTime := uutid.Time()
+	uutidTime := uutid.Time().Truncate(0)
 
 	diff := uutidTime.Sub(now)
 	if diff < 0 {
@@ -131,14 +131,14 @@ func TestNewWithMathRand(t *testing.T) {
 func TestNewWithVersion(t *testing.T) {
 	SetVersion(5)
 
-	now := time.Now()
+	now := time.Now().Truncate(0)
 
 	uutid := New()
 	if uutid == NilUUTID {
 		t.Fatal("expected utid to not be nil")
 	}
 
-	uutidTime := uutid.Time()
+	uutidTime := uutid.Time().Truncate(0)
 
 	diff := uutidTime.Sub(now)
 	if diff < 0 {
@@ -244,7 +244,7 @@ func TestFromString(t *testing.T) {
 }
 
 func TestAllCombosOnSameUUTID(t *testing.T) {
-	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC)
+	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC).Truncate(0)
 	testUUTID := NewWithTime(testTime)
 
 	fromFuncs := map[string]func(string) (UUTID, error){
