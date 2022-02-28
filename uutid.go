@@ -48,7 +48,7 @@ func SetVersion(v int) error {
 // New return a UUTID that looks like a UUID but is not directly compatible with UUID.
 // UUTID can be converted to any UUID type.
 func New() UUTID {
-	return NewWithTime(time.Now())
+	return NewWithTime(time.Now().UTC())
 }
 
 // NewWithTime is used by New which uses time.Now() as t
