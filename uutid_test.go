@@ -12,7 +12,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	now := time.Now().Truncate(0)
+	now := time.Now()
 
 	uutid := New()
 	if uutid == NilUUTID {
@@ -31,7 +31,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestNewWithTimeNow(t *testing.T) {
-	now := time.Now().Truncate(0)
+	now := time.Now()
 
 	uutid := NewWithTime(now)
 	if uutid == NilUUTID {
@@ -48,7 +48,7 @@ func TestNewWithTimeNow(t *testing.T) {
 }
 
 func TestNewWithCustomTime(t *testing.T) {
-	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC).Truncate(0)
+	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC)
 
 	uutid := NewWithTime(testTime)
 	if uutid == NilUUTID {
@@ -68,8 +68,8 @@ func TestNewWithCustomTime(t *testing.T) {
 }
 
 func TestUUIDUnixTime(t *testing.T) {
-	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC).Truncate(0)
-	expectedTime := time.Date(2021, 1, 17, 1, 5, 10, 0, time.UTC).Truncate(0)
+	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC)
+	expectedTime := time.Date(2021, 1, 17, 1, 5, 10, 0, time.UTC)
 
 	uutid := NewWithTime(testTime)
 	if uutid == NilUUTID {
@@ -107,7 +107,7 @@ func TestNewWithMathRand(t *testing.T) {
 	rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
 	SetRand(rander)
 
-	now := time.Now().Truncate(0)
+	now := time.Now()
 
 	uutid := New()
 	if uutid == NilUUTID {
@@ -131,7 +131,7 @@ func TestNewWithMathRand(t *testing.T) {
 func TestNewWithVersion(t *testing.T) {
 	SetVersion(5)
 
-	now := time.Now().Truncate(0)
+	now := time.Now()
 
 	uutid := New()
 	if uutid == NilUUTID {
@@ -244,7 +244,7 @@ func TestFromString(t *testing.T) {
 }
 
 func TestAllCombosOnSameUUTID(t *testing.T) {
-	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC).Truncate(0)
+	testTime := time.Date(2021, 1, 17, 1, 5, 10, 123456900, time.UTC)
 	testUUTID := NewWithTime(testTime)
 
 	fromFuncs := map[string]func(string) (UUTID, error){
