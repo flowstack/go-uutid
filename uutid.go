@@ -1,13 +1,13 @@
 package uutid
 
 import (
-	"crypto/rand"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"time"
 )
 
@@ -18,8 +18,8 @@ var (
 	version = 4
 
 	// math/rand is faster than crypto/rand, but not cryptographically secure
-	// rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
-	rander = rand.Reader
+	rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
+	//rander = rand.Reader
 
 	// NilUUTID is an empty UUTID, all zeros
 	NilUUTID UUTID
@@ -30,7 +30,8 @@ var (
 // For slower but cryptographically secure randomness, use rand.Reader from crypto/rand.
 func SetRand(r io.Reader) {
 	if r == nil {
-		rander = rand.Reader
+		// rander = rand.Reader
+		rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
 		return
 	}
 	rander = r

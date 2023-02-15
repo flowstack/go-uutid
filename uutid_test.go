@@ -2,11 +2,10 @@ package uutid
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
-	"io"
 	"log"
-	"math/rand"
 	"testing"
 	"time"
 )
@@ -103,9 +102,8 @@ func TestUUID(t *testing.T) {
 	}
 }
 
-func TestNewWithMathRand(t *testing.T) {
-	rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
-	SetRand(rander)
+func TestNewWithCryptoRand(t *testing.T) {
+	SetRand(rand.Reader)
 
 	now := time.Now().Truncate(0)
 
@@ -293,9 +291,8 @@ func BenchmarkNewWithTime(b *testing.B) {
 	_ = uutid
 }
 
-func BenchmarkNewMathRand(b *testing.B) {
-	rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
-	SetRand(rander)
+func BenchmarkNewCryptoRand(b *testing.B) {
+	SetRand(rand.Reader)
 	var uutid UUTID
 	for i := 0; i < b.N; i++ {
 		uutid = New()
@@ -305,9 +302,8 @@ func BenchmarkNewMathRand(b *testing.B) {
 	SetRand(nil)
 }
 
-func BenchmarkNewWithTimeMathRand(b *testing.B) {
-	rander = io.Reader(rand.New(rand.NewSource(int64(time.Now().UnixNano()))))
-	SetRand(rander)
+func BenchmarkNewWithTimeCryptoRand(b *testing.B) {
+	SetRand(rand.Reader)
 	var uutid UUTID
 	now := time.Now()
 	for i := 0; i < b.N; i++ {
